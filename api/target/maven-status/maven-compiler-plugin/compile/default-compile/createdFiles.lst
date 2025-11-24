@@ -1,0 +1,10 @@
+org\openmrs\module\pinnaclecustomemrmodule\CustomeremrActivator.class
+org\openmrs\module\pinnaclecustomemrmodule\api\CustomeremrService.class
+org\openmrs\module\pinnaclecustomemrmodule\api\dao\CustomeremrDao.class
+org\openmrs\module\pinnaclecustomemrmodule\CustomeremrConfig.class
+org\openmrs\module\pinnaclecustomemrmodule\api\impl\CustomeremrServiceImpl.class
+org\openmrs\module\pinnaclecustomemrmodule\api\patientAndEncounter\impl\MPIServiceImpl.class
+org\openmrs\module\pinnaclecustomemrmodule\api\patientAndEncounter\service\PatientEncounterService.class
+org\openmrs\module\pinnaclecustomemrmodule\api\patientAndEncounter\service\MPIService.class
+org\openmrs\module\pinnaclecustomemrmodule\api\patientAndEncounter\impl\PatientEncounterServiceImpl.class
+org\openmrs\module\pinnaclecustomemrmodule\Item.class

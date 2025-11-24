@@ -1,0 +1,2 @@
+org\openmrs\module\pinnaclecustomemrmodule\extension\html\AdminList.class
+org\openmrs\module\pinnaclecustomemrmodule\web\controller\CustomeremrController.class
