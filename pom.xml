@@ -1,121 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<parent>
-		<groupId>org.openmrs.maven.parents</groupId>
-		<artifactId>maven-parent-openmrs-module</artifactId>
-		<version>1.1.1</version>
-	</parent>
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.openmrs.module</groupId>
-	<artifactId>pinnaclecustomemrmodule</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>Customeremr</name>
-	<description>OpenMRS Custom Inplementation</description>
+    <groupId>org.openmrs.module</groupId>
+    <artifactId>pinnaclecustomemrmodule</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-	<url>https://wiki.openmrs.org/x/FQ4z</url>
+    <name>Pinnacle Custom EMR Module</name>
+    <description>Parent project for Pinnacle Custom EMR Module</description>
 
-	<scm>
-		<connection>scm:git:git@github.com:openmrs/openmrs-module-pinnaclecustomemrmodule.git</connection>
-		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-pinnaclecustomemrmodule.git</developerConnection>
-		<url>https://github.com/openmrs/openmrs-module-pinnaclecustomemrmodule/</url>
-	</scm>
+    <modules>
+        <module>api</module>
+        <module>omod</module>
+    </modules>
 
-	<modules>
-		<module>api</module>
-		<module>omod</module>
-	</modules>
+    <properties>
+        <openmrsPlatformVersion>2.6.4</openmrsPlatformVersion> <!-- or 2.7.x if using RefApp 2.13+ -->
+        <java.version>11</java.version>
+    </properties>
 
-	<repositories>
-		<repository>
-			<id>openmrs-repo</id>
-			<name>OpenMRS Nexus Repository</name>
-			<url>https://mavenrepo.openmrs.org/public</url>
-		</repository>
-		<repository>
-			<id>central</id>
-			<name>Maven Repository Switchboard</name>
-			<layout>default</layout>
-			<url>https://repo1.maven.org/maven2</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>openmrs-repo</id>
-			<name>OpenMRS Nexus Repository</name>
-			<url>https://mavenrepo.openmrs.org/public</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
+    <repositories>
+        <repository>
+            <id>openmrs-repo</id>
+            <name>OpenMRS Maven Repository</name>
+            <url>https://mavenrepo.openmrs.org/public</url>
+        </repository>
+    </repositories>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!-- Spotless plugin -->
-				<plugin>
-					<groupId>com.diffplug.spotless</groupId>
-					<artifactId>spotless-maven-plugin</artifactId>
-					<version>2.27.2</version>
-					<configuration>
-						<java>
-							<licenseHeader>
-								<file>${project.basedir}/license-header.txt</file>
-							</licenseHeader>
-							<eclipse>
-								<file>${project.basedir}/OpenMRSFormatter.xml</file>
-							</eclipse>
-							<removeUnusedImports />
-							<importOrder>
-								<order>javax,java</order>
-							</importOrder>
-						</java>
-						<formats>
-							<format>
-								<includes>
-									<include>**/*.xml</include>
-								</includes>
-								<licenseHeader>
-									<file>${project.basedir}/license-header.txt</file>
-									<delimiter>^(?!&lt;\?xml)</delimiter>
-								</licenseHeader>
-							</format>
-						</formats>
-					</configuration>
-					<executions>
-						<execution>
-							<id>spotless-apply</id>
-							<phase>validate</phase>
-							<goals>
-								<goal>apply</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>openmrs-repo</id>
+            <name>OpenMRS Maven Repository</name>
+            <url>https://mavenrepo.openmrs.org/public</url>
+        </pluginRepository>
+    </pluginRepositories>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>pinnaclecustomemrmodule-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<properties>
-		<openmrsPlatformVersion>1.11.6</openmrsPlatformVersion>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

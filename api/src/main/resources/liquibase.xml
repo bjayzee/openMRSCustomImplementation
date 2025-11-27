@@ -1,39 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
- 
-    <!--
-    	See http://wiki.openmrs.org/display/docs/Module+liquibase+File for 
-    	documentation on this file.
-    
-        See http://www.liquibase.org/manual/home#available_database_refactorings
-        for a list of supported elements and attributes
-    -->
- 
- 	<!-- Uncomment the changeset below if you want to make the Item class persistable, see also Item and CustomeremrDaoTest -->
- 	<!--
-	<changeSet id="pinnaclecustomemrmodule-2016-08-02-12-21" author="raff">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<!-- Existing alias table -->
+	<changeSet id="2025-11-25-audit-table" author="pinnacle">
 		<preConditions onFail="MARK_RAN">
-			<not><tableExists tableName="pinnaclecustomemrmodule_item"/></not>
+			<not>
+				<tableExists tableName="emr_patient_alias" />
+			</not>
 		</preConditions>
-		<comment>
-			Creating the pinnaclecustomemrmodule_item table
-		</comment>
-		<createTable tableName="pinnaclecustomemrmodule_item">
-			<column name="pinnaclecustomemrmodule_item_id" type="int" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false"/>
-			</column>
-			<column name="uuid" type="char(38)">
-				<constraints nullable="false" unique="true"></constraints>
-			</column>
-			<column name="owner" type="int" />
-			<column name="description" type="varchar(255)" />
+		<createTable tableName="emr_patient_alias">
+			<column name="id" type="int" autoIncrement="true"><constraints primaryKey="true" /></column>
+			<column name="patient_id" type="int"><constraints nullable="false" /></column>
+			<column name="alias" type="varchar(255)" />
+			<column name="date_created" type="datetime" defaultValueComputed="CURRENT_TIMESTAMP" />
 		</createTable>
-        <addForeignKeyConstraint constraintName="pinnaclecustomemrmodule_item_owner_fk" baseTableName="pinnaclecustomemrmodule_item" baseColumnNames="owner"  referencedTableName="users"
-                                 referencedColumnNames="user_id" />
-    </changeSet> -->
- 
+		<addForeignKeyConstraint baseTableName="emr_patient_alias" baseColumnNames="patient_id"
+			referencedTableName="patient" referencedColumnNames="patient_id"
+			constraintName="fk_emr_patient_alias_patient" />
+	</changeSet>
+
+	<!-- Create all required concepts for Pinnacle EMR -->
+	<changeSet id="2025-11-27-pinnacle-concepts" author="pinnacle">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="concept" />
+			</not>
+		</preConditions>
+
+		<!-- Concept: SOAP Note (Group) -->
+		<sql> INSERT IGNORE INTO concept (datatype_id, class_id, creator, date_created, uuid) SELECT
+			4, 14, 1, NOW(), 'pinnacle-soap-group-uuid' FROM dual WHERE NOT EXISTS (SELECT 1 FROM
+			concept_name WHERE name = 'SOAP Note'); INSERT IGNORE INTO concept_name (concept_id,
+			name, locale, creator, date_created, concept_name_type, uuid) SELECT concept_id, 'SOAP
+			Note', 'en', 1, NOW(), 'FULLY_SPECIFIED', UUID() FROM concept WHERE uuid =
+			'pinnacle-soap-group-uuid'; INSERT IGNORE INTO concept_name (concept_id, name, locale,
+			creator, date_created, uuid) SELECT concept_id, 'Subjective', 'en', 1, NOW(), UUID()
+			FROM concept WHERE uuid = 'pinnacle-soap-group-uuid'; INSERT IGNORE INTO concept_name
+			(concept_id, name, locale, creator, date_created, uuid) SELECT concept_id, 'Objective',
+			'en', 1, NOW(), UUID() FROM concept WHERE uuid = 'pinnacle-soap-group-uuid'; INSERT
+			IGNORE INTO concept_name (concept_id, name, locale, creator, date_created, uuid) SELECT
+			concept_id, 'Assessment', 'en', 1, NOW(), UUID() FROM concept WHERE uuid =
+			'pinnacle-soap-group-uuid'; INSERT IGNORE INTO concept_name (concept_id, name, locale,
+			creator, date_created, uuid) SELECT concept_id, 'Plan', 'en', 1, NOW(), UUID() FROM
+			concept WHERE uuid = 'pinnacle-soap-group-uuid'; </sql>
+
+		<!-- Vital Signs Group -->
+		<sql> INSERT IGNORE INTO concept (datatype_id, class_id, creator, date_created, uuid) SELECT
+			4, 14, 1, NOW(), 'pinnacle-vitals-group-uuid' FROM dual WHERE NOT EXISTS (SELECT 1 FROM
+			concept_name WHERE name = 'Vital Signs'); INSERT IGNORE INTO concept_name (concept_id,
+			name, locale, creator, date_created, concept_name_type, uuid) SELECT concept_id, 'Vital
+			Signs', 'en', 1, NOW(), 'FULLY_SPECIFIED', UUID() FROM concept WHERE uuid =
+			'pinnacle-vitals-group-uuid'; </sql>
+
+		<!-- Individual Vital Concepts -->
+		<sql> INSERT IGNORE INTO concept (datatype_id, class_id, creator, date_created, uuid) VALUES
+			((SELECT concept_datatype_id FROM concept_datatype WHERE name = 'Numeric'), 3, 1, NOW(),
+			'temp-uuid'), ((SELECT concept_datatype_id FROM concept_datatype WHERE name =
+			'Numeric'), 3, 1, NOW(), 'pulse-uuid'), ((SELECT concept_datatype_id FROM
+			concept_datatype WHERE name = 'Numeric'), 3, 1, NOW(), 'bp-sys-uuid'), ((SELECT
+			concept_datatype_id FROM concept_datatype WHERE name = 'Numeric'), 3, 1, NOW(),
+			'bp-dia-uuid'), ((SELECT concept_datatype_id FROM concept_datatype WHERE name =
+			'Numeric'), 3, 1, NOW(), 'rr-uuid'), ((SELECT concept_datatype_id FROM concept_datatype
+			WHERE name = 'Numeric'), 3, 1, NOW(), 'spo2-uuid'), ((SELECT concept_datatype_id FROM
+			concept_datatype WHERE name = 'Numeric'), 3, 1, NOW(), 'height-uuid'), ((SELECT
+			concept_datatype_id FROM concept_datatype WHERE name = 'Numeric'), 3, 1, NOW(),
+			'weight-uuid'); INSERT IGNORE INTO concept_name (concept_id, name, locale, creator,
+			date_created, concept_name_type, uuid) SELECT concept_id, 'Temperature', 'en', 1, NOW(),
+			'FULLY_SPECIFIED', UUID() FROM concept WHERE uuid = 'temp-uuid'; INSERT IGNORE INTO
+			concept_name (concept_id, name, locale, creator, date_created, concept_name_type, uuid)
+			SELECT concept_id, 'Pulse', 'en', 1, NOW(), 'FULLY_SPECIFIED', UUID() FROM concept WHERE
+			uuid = 'pulse-uuid'; INSERT IGNORE INTO concept_name (concept_id, name, locale, creator,
+			date_created, concept_name_type, uuid) SELECT concept_id, 'Systolic blood pressure',
+			'en', 1, NOW(), 'FULLY_SPECIFIED', UUID() FROM concept WHERE uuid = 'bp-sys-uuid';
+			INSERT IGNORE INTO concept_name (concept_id, name, locale, creator, date_created,
+			concept_name_type, uuid) SELECT concept_id, 'Diastolic blood pressure', 'en', 1, NOW(),
+			'FULLY_SPECIFIED', UUID() FROM concept WHERE uuid = 'bp-dia-uuid'; INSERT IGNORE INTO
+			concept_name (concept_id, name, locale, creator, date_created, concept_name_type, uuid)
+			SELECT concept_id, 'Respiratory rate', 'en', 1, NOW(), 'FULLY_SPECIFIED', UUID() FROM
+			concept WHERE uuid = 'rr-uuid'; INSERT IGNORE INTO concept_name (concept_id, name,
+			locale, creator, date_created, concept_name_type, uuid) SELECT concept_id, 'Oxygen
+			saturation', 'en', 1, NOW(), 'FULLY_SPECIFIED', UUID() FROM concept WHERE uuid =
+			'spo2-uuid'; INSERT IGNORE INTO concept_name (concept_id, name, locale, creator,
+			date_created, concept_name_type, uuid) SELECT concept_id, 'Height (cm)', 'en', 1, NOW(),
+			'FULLY_SPECIFIED', UUID() FROM concept WHERE uuid = 'height-uuid'; INSERT IGNORE INTO
+			concept_name (concept_id, name, locale, creator, date_created, concept_name_type, uuid)
+			SELECT concept_id, 'Weight (kg)', 'en', 1, NOW(), 'FULLY_SPECIFIED', UUID() FROM concept
+			WHERE uuid = 'weight-uuid'; </sql>
+
+		<!-- Diagnosis Concept -->
+		<sql> INSERT IGNORE INTO concept (datatype_id, class_id, creator, date_created, uuid) SELECT
+			3, 4, 1, NOW(), 'diagnosis-uuid' FROM dual WHERE NOT EXISTS (SELECT 1 FROM concept_name
+			WHERE name = 'Diagnosis'); INSERT IGNORE INTO concept_name (concept_id, name, locale,
+			creator, date_created, concept_name_type, uuid) SELECT concept_id, 'Diagnosis', 'en', 1,
+			NOW(), 'FULLY_SPECIFIED', UUID() FROM concept WHERE uuid = 'diagnosis-uuid'; </sql>
+	</changeSet>
 </databaseChangeLog>

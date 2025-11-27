@@ -1,34 +1,101 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>pinnaclecustomemrmodule</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
+	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pinnaclecustomemrmodule-omod</artifactId>
 	<packaging>jar</packaging>
-	<name>Customeremr OMOD</name>
-	<description>Omod submodule for Customeremr</description>
+	<name>Pinnacle Custom EMR Module - OMOD</name>
 
 	<dependencies>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>pinnaclecustomemrmodule-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
+		<!-- Dependency on API module -->
 		<dependency>
-			<groupId>org.openmrs.web</groupId>
-			<artifactId>openmrs-web</artifactId>
-            <scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openmrs.web</groupId>
-			<artifactId>openmrs-web</artifactId>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>pinnaclecustomemrmodule-api</artifactId>
+			<version>${project.version}</version>
 			<scope>provided</scope>
-			<classifier>tests</classifier>
 		</dependency>
+
+		<!-- OpenMRS Web (needed for AdministrationSectionExt) -->
+		<dependency>
+			<groupId>org.openmrs.web</groupId>
+			<artifactId>openmrs-web</artifactId>
+			<version>2.6.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- Spring (controllers, annotations) -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>5.3.39</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.39</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>5.3.39</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Hibernate (for Criteria, Restrictions, or JPA) -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.6.15.Final</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<version>2.2.3</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- REST module if needed -->
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod</artifactId>
+			<version>2.35.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>legacyui-omod</artifactId>
+			<version>1.13.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- JUnit 4 (OpenMRS modules typically use JUnit 4) -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Hamcrest (for matchers like is(), hasProperty(), etc.) -->
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>2.2</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -38,12 +105,9 @@
 			<plugin>
 				<groupId>org.openmrs.maven.plugins</groupId>
 				<artifactId>maven-openmrs-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
+				<version>1.0.1</version>
+				<extensions>true</extensions>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

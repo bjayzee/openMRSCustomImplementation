@@ -1,64 +1,64 @@
 package org.openmrs.module.pinnaclecustomemrmodule.web.controller.patientAndEncounter;
 
-import org.openmrs.Obs;
+import org.openmrs.Allergy;
 import org.openmrs.Patient;
-import org.openmrs.activelist.Allergy;
+// import org.openmrs.module.pinnaclecustomemrmodule.api.patientAndEncounter.service.AllergyService;
+import org.openmrs.module.pinnaclecustomemrmodule.api.patientAndEncounter.service.MPIService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @RestController
-@RequestMapping("/pinnacle/api/patients")
+@RequestMapping("/pinnacle/api/v1")
 public class PatientController {
 
-    @Autowired
-    private MpiService mpiService;
+    @Autowired private MPIService mpiService;
+    // @Autowired private AllergyService allergyService;
 
-    @Autowired
-    private AllergyService allergyService;
-
-
-    @PostMapping
-    public Patient createPatient(@RequestBody Patient p) {
-        return mpiService.createPatient(p);
-    }
-
-    @GetMapping("/search")
-    public List<Patient> search(@RequestParam("q") String q) {
+    @GetMapping("/patients/search")
+    public List<Patient> searchPatients(@RequestParam("q") String q) {
         return mpiService.searchPatients(q);
     }
 
-    @GetMapping("/{uuid}")
-    public Patient getByUuid(@PathVariable String uuid) {
-        return mpiService.getPatientByUuid(uuid);
+    @GetMapping("/patients/{uuid}")
+    public Patient getPatient(@PathVariable String uuid) {
+        return mpiService.getPatientById(uuid);
     }
 
-    @PostMapping("/merge")
-    public Patient merge(@RequestParam Integer sourceId, @RequestParam Integer targetId,
-            @RequestParam(required = false) String reason) {
+    @PostMapping("/patients")
+    public Patient createPatient(@RequestBody Patient patient) {
+        return mpiService.createPatient(patient);
+    }
+
+    @PostMapping("/patients/merge")
+    public Patient mergePatients(@RequestParam Integer sourceId,
+                                 @RequestParam Integer targetId,
+                                 @RequestParam(required = false) String reason) {
         return mpiService.mergePatients(sourceId, targetId, reason);
     }
 
-    @PostMapping("/split")
-    public Patient split(@RequestParam Integer mergedPatientId, @RequestBody(required = false) Integer[] encounterIds,
-            @RequestParam(required = false) String reason) {
-        return mpiService.splitPatient(mergedPatientId, encounterIds, reason);
+    @PostMapping("/patients/split")
+    public Patient splitPatient(@RequestParam Integer mergedPatientId,
+                                @RequestParam(value = "encounterIds", required = false) List<Integer> encounterIds,
+                                @RequestParam(required = false) String reason) {
+        Integer[] ids = encounterIds != null ? encounterIds.toArray(new Integer[0]) : null;
+        return mpiService.splitPatient(mergedPatientId, ids, reason);
     }
 
-    @PostMapping("/{uuid}/allergies")
-    public Allergy addAllergy(@PathVariable String uuid, @RequestParam String allergenConcept,
-            @RequestParam(required = false) String reactionConcept,
-            @RequestParam(required = false) String severityConcept) {
-        Patient p = mpiService.getPatientByUuid(uuid);
-        return allergyService.recordAllergy(p, allergenConcept, reactionConcept, severityConcept);
-    }
+    // @PostMapping("/patients/{uuid}/allergies")
+    // public Allergy recordAllergy(@PathVariable String uuid,
+    //                              @RequestParam String allergen,
+    //                              @RequestParam(required = false) String reaction,
+    //                              @RequestParam(required = false) String severity) {
+    //     Patient patient = mpiService.getPatientById(uuid);
+    //     if (patient == null) throw new RuntimeException("Patient not found");
+    //     return allergyService.recordAllergy(patient, allergen, reaction, severity);
+    // }
 
-    @GetMapping("/{uuid}/allergies")
-    public List<Allergy> getAllergies(@PathVariable String uuid) {
-        Patient p = mpiService.getPatientByUuid(uuid);
-        return allergyService.getAllergies(p);
-    }
-
+    // @GetMapping("/patients/{uuid}/allergies")
+    // public List<Allergy> getAllergies(@PathVariable String uuid) {
+    //     Patient patient = mpiService.getPatientById(uuid);
+    //     return allergyService.getAllergies(patient);
+    // }
 }

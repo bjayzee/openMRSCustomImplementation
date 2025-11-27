@@ -1,39 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
- 
-    <!--
-    	See http://wiki.openmrs.org/display/docs/Module+liquibase+File for 
-    	documentation on this file.
-    
-        See http://www.liquibase.org/manual/home#available_database_refactorings
-        for a list of supported elements and attributes
-    -->
- 
- 	<!-- Uncomment the changeset below if you want to make the Item class persistable, see also Item and CustomeremrDaoTest -->
- 	<!--
-	<changeSet id="pinnaclecustomemrmodule-2016-08-02-12-21" author="raff">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+	<changeSet id="2025-11-25-audit-table" author="pinnacle">
 		<preConditions onFail="MARK_RAN">
-			<not><tableExists tableName="pinnaclecustomemrmodule_item"/></not>
+			<not>
+				<tableExists tableName="emr_patient_alias" />
+			</not>
 		</preConditions>
-		<comment>
-			Creating the pinnaclecustomemrmodule_item table
-		</comment>
-		<createTable tableName="pinnaclecustomemrmodule_item">
-			<column name="pinnaclecustomemrmodule_item_id" type="int" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false"/>
+		<createTable tableName="emr_patient_alias">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" />
 			</column>
-			<column name="uuid" type="char(38)">
-				<constraints nullable="false" unique="true"></constraints>
+			<column name="patient_id" type="int">
+				<constraints nullable="false" />
 			</column>
-			<column name="owner" type="int" />
-			<column name="description" type="varchar(255)" />
+			<column name="alias" type="varchar(255)" />
+			<column name="date_created" type="datetime" defaultValueComputed="CURRENT_TIMESTAMP" />
 		</createTable>
-        <addForeignKeyConstraint constraintName="pinnaclecustomemrmodule_item_owner_fk" baseTableName="pinnaclecustomemrmodule_item" baseColumnNames="owner"  referencedTableName="users"
-                                 referencedColumnNames="user_id" />
-    </changeSet> -->
- 
+		<addForeignKeyConstraint baseTableName="emr_patient_alias"
+			baseColumnNames="patient_id"
+			referencedTableName="patient"
+			referencedColumnNames="patient_id"
+			constraintName="fk_emr_patient_alias_patient" />
+	</changeSet>
 </databaseChangeLog>

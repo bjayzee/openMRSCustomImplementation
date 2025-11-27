@@ -60,7 +60,7 @@ public class CustomeremrController {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public String onPost(HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
+	public String onPost(HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject, 
 	        BindingResult errors) {
 		
 		if (errors.hasErrors()) {
@@ -69,9 +69,4 @@ public class CustomeremrController {
 		
 		return VIEW;
 	}
-	
-	/**
-	 * This class returns the form backing object. This can be a string, a boolean, or a normal java
-	 * pojo. The bean name defined in the ModelAttribute annotation and the type can be just defined
-	 * by the return type of this method
-	 */
+}	

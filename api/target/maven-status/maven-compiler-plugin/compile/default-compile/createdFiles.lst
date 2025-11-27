@@ -7,4 +7,5 @@ org\openmrs\module\pinnaclecustomemrmodule\api\patientAndEncounter\impl\MPIServi
 org\openmrs\module\pinnaclecustomemrmodule\api\patientAndEncounter\service\PatientEncounterService.class
 org\openmrs\module\pinnaclecustomemrmodule\api\patientAndEncounter\service\MPIService.class
 org\openmrs\module\pinnaclecustomemrmodule\api\patientAndEncounter\impl\PatientEncounterServiceImpl.class
+org\openmrs\module\pinnaclecustomemrmodule\constants\PinnacleConstants.class
 org\openmrs\module\pinnaclecustomemrmodule\Item.class
